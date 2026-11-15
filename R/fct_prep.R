@@ -84,14 +84,14 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
       is.na(.data$censor_reason) | !grepl("^left_", .data$censor_reason)
     ) |>
     dplyr::transmute(
-      player = .data$label,
+      forecast = .data$as_of,
       team = .data$team_slug,
+      player = .data$label,
       injury = clean_reason(.data$injury_reason),
       body_part = body_part_label(.data$body_region),
       status = .data$status,
       injured = .data$injury_start_date,
-      predicted = .data$pred_return_date,
-      forecast = .data$as_of
+      predicted = .data$pred_return_date
     ) |>
     dplyr::arrange(.data$predicted, .data$player)
 }
