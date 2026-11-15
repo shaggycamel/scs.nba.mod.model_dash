@@ -14,6 +14,7 @@ app_server <- function(input, output, session) {
     )
   })
 
+  mod_injuries_server("injuries_1")
   mod_scorecard_server("scorecard_1")
   mod_model_page_server("injury_1", "injury_duration")
 }

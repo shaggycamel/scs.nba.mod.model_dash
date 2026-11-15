@@ -10,7 +10,11 @@ contract so the next model is a data adapter plus one registry row.
 
 ## What it reports
 
-Every panel is computed from the baked daily forecasts by the same metric
+The **Injuries** page is the working view: one row per currently injured player
+with the injury filing, body part, date of injury, predicted return and the
+date of the forecast.
+
+The model page is computed from the baked daily forecasts by the same metric
 functions (`R/fct_metrics.R`):
 
 - **Calibration** — reliability plot, Brier, log loss, AUC and Brier skill per

@@ -52,3 +52,17 @@ test_that("horizons that cannot be scored are not offered", {
   offered <- model_horizons("injury_duration")
   expect_true(all(unname(offered) %in% mdl_prob$horizon[mdl_prob$scoreable]))
 })
+
+test_that("the injury table fields are baked", {
+  skip_if_not(file.exists(test_path("..", "..", "data", "mdl_unit.rda")), "data not baked")
+  expect_true(all(c("injury_reason", "injury_start_date", "body_region") %in% names(mdl_unit)))
+  expect_gt(sum(!is.na(mdl_unit$injury_reason)), 0)
+})
+
+test_that("injury text is cleaned for display", {
+  expect_equal(clean_reason("Injury/Illness - Left Ankle Sprain"), "Left Ankle Sprain")
+  expect_true(is.na(clean_reason("-")))
+  expect_true(is.na(clean_reason(NA_character_)))
+  expect_equal(body_part_label("knee"), "Knee")
+  expect_equal(body_part_label(NA_character_), "Unknown")
+})

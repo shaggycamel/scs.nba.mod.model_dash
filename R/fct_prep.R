@@ -24,6 +24,78 @@ DIM_LABELS <- c(
   version = "Model version"
 )
 
+BODY_PART_LABELS <- c(
+  achilles = "Achilles",
+  ankle = "Ankle",
+  back_core = "Back",
+  elbow_arm = "Elbow/arm",
+  foot = "Foot",
+  hamstring = "Hamstring",
+  hand_wrist = "Hand/wrist",
+  head_face = "Head/face",
+  hip_groin = "Hip/groin",
+  knee = "Knee",
+  knee_ligament = "Knee (ligament)",
+  lower_leg = "Lower leg",
+  neck = "Neck",
+  quad = "Quad",
+  shoulder = "Shoulder",
+  systemic = "Systemic",
+  unknown = "Unknown"
+)
+
+body_part_label <- function(x) {
+  out <- unname(BODY_PART_LABELS[x])
+  out[is.na(out)] <- "Unknown"
+  out
+}
+
+clean_reason <- function(x) {
+  out <- sub("^Injury/Illness\\s*-\\s*", "", x)
+  out[out %in% c("", "-", "Injury/Illness")] <- NA_character_
+  out
+}
+
+# Current injuries: the latest forecast for every spell that has not resolved.
+injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
+  latest <- prob |>
+    dplyr::filter(.data$model_id == model_id, .data$scope == "nowcast", .data$horizon == "next_game") |>
+    dplyr::group_by(.data$unit_id) |>
+    dplyr::slice_max(.data$as_of, n = 1, with_ties = FALSE) |>
+    dplyr::ungroup()
+
+  latest |>
+    dplyr::left_join(
+      dplyr::select(
+        units,
+        "unit_id",
+        "label",
+        "team_slug",
+        "injury_start_date",
+        "injury_reason",
+        "body_region",
+        "returned",
+        "censor_reason"
+      ),
+      by = "unit_id"
+    ) |>
+    dplyr::filter(
+      !.data$returned,
+      is.na(.data$censor_reason) | !grepl("^left_", .data$censor_reason)
+    ) |>
+    dplyr::transmute(
+      player = .data$label,
+      team = .data$team_slug,
+      injury = clean_reason(.data$injury_reason),
+      body_part = body_part_label(.data$body_region),
+      status = .data$status,
+      injured = .data$injury_start_date,
+      predicted = .data$pred_return_date,
+      forecast = .data$as_of
+    ) |>
+    dplyr::arrange(.data$predicted, .data$player)
+}
+
 SCOPE_COLOURS <- c(onset = "#133DEF", nowcast = "#8A8D93")
 
 scope_factor <- function(x) {

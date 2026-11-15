@@ -37,7 +37,6 @@ mod_model_page_ui <- function(id, model_id) {
       nav_panel("Trend", mod_trend_ui(ns("trend"))),
       nav_panel("Breakdowns", mod_breakdowns_ui(ns("breakdowns"))),
       nav_panel("Spells", mod_spells_ui(ns("spells"))),
-      nav_panel("Live", mod_live_ui(ns("live"))),
       nav_panel("Data quality", mod_quality_ui(ns("quality")))
     )
   )
@@ -66,7 +65,6 @@ mod_model_page_server <- function(id, model_id) {
     mod_trend_server("trend", filters)
     mod_breakdowns_server("breakdowns", filters)
     mod_spells_server("spells", filters)
-    mod_live_server("live", filters)
     mod_quality_server("quality", filters)
   })
 }
