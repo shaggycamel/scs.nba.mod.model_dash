@@ -66,3 +66,16 @@ test_that("ailment and body part labels are readable", {
   expect_equal(body_part_label("knee"), "Knee")
   expect_equal(body_part_label(NA_character_), "Unknown")
 })
+
+test_that("the accuracy trend is a daily series that honours slices", {
+  skip_if_not(file.exists(test_path("..", "..", "data", "mdl_prob.rda")), "data not baked")
+
+  full <- trend_table("brier_7d")
+  expect_true(all(c("as_of", "value", "n", "rolled") %in% names(full)))
+  expect_gt(nrow(full), 0)
+
+  sliced <- trend_table("brier_7d", ailment = "illness")
+  expect_lt(sum(sliced$n), sum(full$n))
+
+  expect_gt(nrow(trend_table("mae_games")), 0)
+})

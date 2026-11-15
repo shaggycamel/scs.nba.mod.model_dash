@@ -74,6 +74,77 @@ ailment_label <- function(x) {
   out
 }
 
+TREND_METRICS <- c(
+  brier_next = "Brier - next game",
+  brier_7d = "Brier - 7 days",
+  brier_14d = "Brier - 14 days",
+  mae_games = "MAE - games missed",
+  mae_days = "MAE - return days"
+)
+
+trend_table <- function(
+  metric,
+  ailment = "all",
+  body_part = "all",
+  window_days = 28,
+  prob = mdl_prob,
+  point = mdl_point,
+  units = mdl_unit
+) {
+  dims <- dplyr::select(units, "unit_id", "ailment_class", "body_region")
+
+  out <- if (startsWith(metric, "brier")) {
+    horizon_value <- sub("^brier_", "", metric)
+    horizon_value <- if (horizon_value == "next") "next_game" else horizon_value
+    d <- prob |>
+      dplyr::filter(
+        .data$model_id == "injury_duration",
+        .data$scope == "nowcast",
+        .data$horizon == horizon_value,
+        .data$scoreable
+      ) |>
+      dplyr::left_join(dims, by = "unit_id")
+    if (ailment != "all") {
+      d <- dplyr::filter(d, .data$ailment_class == ailment)
+    }
+    if (body_part != "all") {
+      d <- dplyr::filter(d, .data$body_region == body_part)
+    }
+    d |>
+      dplyr::group_by(.data$as_of) |>
+      dplyr::group_modify(~ prob_metrics(.x$p, .x$y)) |>
+      dplyr::ungroup() |>
+      dplyr::transmute(as_of = .data$as_of, value = .data$brier, n = .data$n)
+  } else {
+    measure_value <- if (metric == "mae_games") "games_missed" else "return_days"
+    d <- point |>
+      dplyr::filter(
+        .data$model_id == "injury_duration",
+        .data$scope == "nowcast",
+        .data$measure == measure_value,
+        .data$scoreable
+      ) |>
+      dplyr::left_join(dims, by = "unit_id")
+    if (ailment != "all") {
+      d <- dplyr::filter(d, .data$ailment_class == ailment)
+    }
+    if (body_part != "all") {
+      d <- dplyr::filter(d, .data$body_region == body_part)
+    }
+    d |>
+      dplyr::group_by(.data$as_of) |>
+      dplyr::group_modify(
+        ~ point_metrics(.x$predicted, .x$actual, POINT_TOLERANCES[[measure_value]])
+      ) |>
+      dplyr::ungroup() |>
+      dplyr::transmute(as_of = .data$as_of, value = .data$mae, n = .data$n)
+  }
+
+  out |>
+    dplyr::mutate(rolled = rolling_weighted(.data$as_of, .data$value, .data$n, window_days)) |>
+    dplyr::arrange(.data$as_of)
+}
+
 # Current injuries: the latest forecast for every spell that has not resolved.
 injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
   latest <- prob |>
