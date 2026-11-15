@@ -47,12 +47,6 @@ test_that("onset rows are the first forecast for each spell", {
   expect_true(all(check$as_of == check$first))
 })
 
-test_that("horizons that cannot be scored are not offered", {
-  skip_if_not(file.exists(test_path("..", "..", "data", "mdl_prob.rda")), "data not baked")
-  offered <- model_horizons("injury_duration")
-  expect_true(all(unname(offered) %in% mdl_prob$horizon[mdl_prob$scoreable]))
-})
-
 test_that("the injury table fields are baked", {
   skip_if_not(file.exists(test_path("..", "..", "data", "mdl_unit.rda")), "data not baked")
   expect_true(all(c("ailment_class", "injury_start_date", "body_region") %in% names(mdl_unit)))

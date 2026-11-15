@@ -4,10 +4,7 @@
 #' @noRd
 mod_injuries_ui <- function(id) {
   ns <- NS(id)
-  card(
-    card_header("Injury log"),
-    reactable::reactableOutput(ns("table"))
-  )
+  reactable::reactableOutput(ns("table"))
 }
 
 #' Injuries server

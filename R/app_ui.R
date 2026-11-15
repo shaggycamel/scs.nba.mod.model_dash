@@ -10,10 +10,14 @@ app_ui <- function(request) {
       window_title = "NBA Model Accuracy",
       title = tags$span("Model Accuracy"),
       nav_spacer(),
-      nav_panel("Injuries", mod_injuries_ui("injuries_1")),
-      nav_panel("Accuracy trend", mod_accuracy_trend_ui("accuracy_trend_1")),
       nav_panel("Overview", mod_scorecard_ui("scorecard_1")),
-      nav_panel("Injury Duration", mod_model_page_ui("injury_1", "injury_duration")),
+      nav_panel(
+        "Injuries",
+        bslib::navset_card_tab(
+          nav_panel("Injury log", mod_injuries_ui("injuries_1")),
+          nav_panel("Accuracy trend", mod_accuracy_trend_ui("accuracy_trend_1"))
+        )
+      ),
       nav_item(uiOutput("bake_stamp")),
       theme = nba_theme()
     )

@@ -7,9 +7,10 @@ mod_accuracy_trend_ui <- function(id) {
   ailments <- sort(unique(mdl_unit$ailment_class))
   body_parts <- sort(unique(mdl_unit$body_region))
 
-  layout_sidebar(
-    sidebar = sidebar(
-      width = 260,
+  tagList(
+    bslib::layout_column_wrap(
+      width = 1 / 4,
+      fill = FALSE,
       selectInput(ns("metric"), "Metric", choices = trend_metric_choices(), selected = "brier_7d"),
       selectInput(
         ns("scope"),
@@ -28,10 +29,7 @@ mod_accuracy_trend_ui <- function(id) {
         choices = c("All" = "all", stats::setNames(body_parts, body_part_label(body_parts)))
       )
     ),
-    card(
-      card_header("Model accuracy over time"),
-      plotly::plotlyOutput(ns("plot"), height = 560)
-    )
+    plotly::plotlyOutput(ns("plot"), height = 560)
   )
 }
 

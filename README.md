@@ -10,30 +10,16 @@ contract so the next model is a data adapter plus one registry row.
 
 ## What it reports
 
-The **Injuries** page is the working view: one row per injury spell with the
-body part, ailment class, date of injury, predicted return, forecast date and
-the actual return once the spell resolves.
+- **Overview** — a scorecard, one row per registered model: Brier (next game and
+  7 days) for onset and nowcast, AUC, games MAE, C-index, resolved/censored.
+- **Injuries** — a tabset:
+  - **Injury log** — one row per injury spell with forecast date, team, player,
+    ailment class, body part, date of injury, predicted return and the actual
+    return once the spell resolves.
+  - **Accuracy trend** — daily Brier or MAE with a 28-day weighted mean,
+    filterable by scope (nowcast/onset), ailment class and body part.
 
-The **Accuracy trend** page is one chart: daily Brier or MAE with a 28-day
-weighted mean, filtered by scope (nowcast/onset), ailment class and body part.
-
-The model page is computed from the baked daily forecasts by the same metric
-functions (`R/fct_metrics.R`):
-
-- **Calibration** — reliability plot, Brier, log loss, AUC and Brier skill per
-  horizon.
-- **Accuracy** — error distribution, MAE, median AE, P90 AE and bias for the
-  predicted return date and games missed.
-- **Trend** — daily scores with a 28-day weighted rolling mean and refit
-  markers.
-- **Breakdowns** — the same scores by body region, ailment class, report status,
-  team, history imputation, days out and model version.
-- **Spells** — one player's forecast trajectory against the actual return.
-- **Live** — current unresolved spells ranked by next-game probability.
-- **Data quality** — coverage, censoring reasons and whether the injury report
-  contradicts the box score (a game played but filed `Out`).
-
-Two scopes are always reported side by side:
+Two scopes are reported throughout:
 
 - **Onset** — the first forecast for each spell.
 - **Nowcast** — every daily forecast.
