@@ -35,6 +35,13 @@ mod_injuries_server <- function(id) {
         filterable = TRUE,
         defaultPageSize = 25,
         defaultSorted = "predicted",
+        bordered = TRUE,
+        highlight = TRUE,
+        defaultColDef = reactable::colDef(
+          align = "left",
+          minWidth = 120,
+          headerStyle = list(background = "#cce5ff")
+        ),
         columns = list(
           forecast = reactable::colDef(
             name = "Forecast date",
@@ -42,7 +49,21 @@ mod_injuries_server <- function(id) {
             format = reactable::colFormat(date = TRUE)
           ),
           team = reactable::colDef(name = "Team", align = "left"),
-          player = reactable::colDef(name = "Player", align = "left"),
+          player = reactable::colDef(
+            name = "Player",
+            align = "left",
+            style = function(value, index) {
+              background <- switch(
+                d$status[index],
+                Out = "#f51e1e",
+                Doubtful = "#ffa87f",
+                Questionable = "#ffa87f",
+                Probable = "#fbff7f",
+                "#ffffff"
+              )
+              list(background = background)
+            }
+          ),
           ailment = reactable::colDef(name = "Ailment class", align = "left"),
           body_part = reactable::colDef(name = "Body part", align = "left"),
           status = reactable::colDef(name = "Status", align = "left"),
