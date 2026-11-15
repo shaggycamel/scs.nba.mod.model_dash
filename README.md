@@ -14,6 +14,9 @@ The **Injuries** page is the working view: one row per injury spell with the
 body part, ailment class, date of injury, predicted return, forecast date and
 the actual return once the spell resolves.
 
+The **Accuracy trend** page is one chart: daily Brier or MAE with a 28-day
+weighted mean, filtered by scope (nowcast/onset), ailment class and body part.
+
 The model page is computed from the baked daily forecasts by the same metric
 functions (`R/fct_metrics.R`):
 

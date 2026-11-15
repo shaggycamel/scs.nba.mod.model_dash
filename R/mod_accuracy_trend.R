@@ -10,7 +10,13 @@ mod_accuracy_trend_ui <- function(id) {
   layout_sidebar(
     sidebar = sidebar(
       width = 260,
-      selectInput(ns("metric"), "Metric", choices = TREND_METRICS, selected = "brier_7d"),
+      selectInput(ns("metric"), "Metric", choices = trend_metric_choices(), selected = "brier_7d"),
+      selectInput(
+        ns("scope"),
+        "Scope",
+        choices = c("Nowcast" = "nowcast", "Onset" = "onset"),
+        selected = "nowcast"
+      ),
       selectInput(
         ns("ailment"),
         "Ailment class",
@@ -36,8 +42,8 @@ mod_accuracy_trend_ui <- function(id) {
 mod_accuracy_trend_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     daily <- reactive({
-      req(input$metric, input$ailment, input$body_part)
-      trend_table(input$metric, input$ailment, input$body_part)
+      req(input$metric, input$scope, input$ailment, input$body_part)
+      trend_table(input$metric, input$scope, input$ailment, input$body_part)
     })
 
     output$plot <- plotly::renderPlotly({

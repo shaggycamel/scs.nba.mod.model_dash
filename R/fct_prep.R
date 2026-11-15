@@ -82,8 +82,13 @@ TREND_METRICS <- c(
   mae_days = "MAE - return days"
 )
 
+trend_metric_choices <- function() {
+  stats::setNames(names(TREND_METRICS), unname(TREND_METRICS))
+}
+
 trend_table <- function(
   metric,
+  scope = "nowcast",
   ailment = "all",
   body_part = "all",
   window_days = 28,
@@ -92,6 +97,7 @@ trend_table <- function(
   units = mdl_unit
 ) {
   dims <- dplyr::select(units, "unit_id", "ailment_class", "body_region")
+  scope_value <- scope
 
   out <- if (startsWith(metric, "brier")) {
     horizon_value <- sub("^brier_", "", metric)
@@ -99,7 +105,7 @@ trend_table <- function(
     d <- prob |>
       dplyr::filter(
         .data$model_id == "injury_duration",
-        .data$scope == "nowcast",
+        .data$scope == scope_value,
         .data$horizon == horizon_value,
         .data$scoreable
       ) |>
@@ -120,7 +126,7 @@ trend_table <- function(
     d <- point |>
       dplyr::filter(
         .data$model_id == "injury_duration",
-        .data$scope == "nowcast",
+        .data$scope == scope_value,
         .data$measure == measure_value,
         .data$scoreable
       ) |>
