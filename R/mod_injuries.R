@@ -6,10 +6,6 @@ mod_injuries_ui <- function(id) {
   ns <- NS(id)
   card(
     card_header("Current injuries"),
-    htmltools::p(
-      class = "text-muted small mb-2",
-      "Latest forecast per active spell. Dates are the first missed game and the median predicted return."
-    ),
     reactable::reactableOutput(ns("table"))
   )
 }
@@ -31,9 +27,8 @@ mod_injuries_server <- function(id) {
       }
       reactable::reactable(
         d,
-        searchable = TRUE,
+        pagination = FALSE,
         filterable = TRUE,
-        defaultPageSize = 25,
         defaultSorted = "predicted",
         bordered = TRUE,
         highlight = TRUE,
