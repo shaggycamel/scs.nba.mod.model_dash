@@ -23,8 +23,8 @@ functions (`R/fct_metrics.R`):
   team, history imputation, days out and model version.
 - **Spells** — one player's forecast trajectory against the actual return.
 - **Live** — current unresolved spells ranked by next-game probability.
-- **Data quality** — coverage, censoring reasons and the gap between the two
-  return definitions (first game played vs last `Out` report).
+- **Data quality** — coverage, censoring reasons and whether the injury report
+  contradicts the box score (a game played but filed `Out`).
 
 Two scopes are always reported side by side:
 

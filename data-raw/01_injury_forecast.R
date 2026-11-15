@@ -115,21 +115,6 @@ first_rows <- rows |>
   slice_min(.data$prediction_date, n = 1, with_ties = FALSE) |>
   ungroup()
 
-# Report-based outcome, used by the data-quality panel to show how much of the
-# measured error comes from the outcome definition rather than the model.
-last_out <- DBI::dbGetQuery(
-  db_con,
-  "SELECT f.spell_id, max(i.game_date) AS last_out_date
-   FROM mod.injury_daily_forecast_vw f
-   JOIN nba.injuries_vw i
-     ON i.nba_id = f.player_id
-    AND i.season = f.season
-    AND i.game_date > f.injury_start_date
-    AND i.status = 'Out'
-   GROUP BY 1"
-) |>
-  as_tibble()
-
 mdl_unit <- first_rows |>
   mutate(
     model_id = MODEL_ID,
@@ -145,8 +130,6 @@ mdl_unit <- first_rows |>
     games_missed = .data$actual_games_missed,
     version_onset = .data$version
   ) |>
-  left_join(last_out, by = c("spell_id" = "spell_id")) |>
-  mutate(outcome_gap_days = as.numeric(.data$actual_return_date - .data$last_out_date)) |>
   select(
     "model_id",
     "unit_id",
@@ -165,8 +148,6 @@ mdl_unit <- first_rows |>
     "returned" = "return_seen",
     "censored",
     "actual_return_date",
-    "last_out_date",
-    "outcome_gap_days",
     "duration_days",
     "pred_days",
     "games_missed",
@@ -310,8 +291,42 @@ mdl_censor <- mdl_unit |>
     n = .data$n
   )
 
-outcome_gap <- mdl_unit |>
-  filter(.data$returned, !is.na(.data$last_out_date))
+# The model's target is the first game played, so a report that still files a
+# played game as Out is a source-data defect, not a different outcome definition.
+out_on_return <- DBI::dbGetQuery(
+  db_con,
+  "WITH sp AS (
+     SELECT spell_id, player_id, season, max(actual_return_date) AS ret
+     FROM mod.injury_daily_forecast_vw
+     WHERE return_seen
+     GROUP BY 1, 2, 3
+   )
+   SELECT count(*) AS spells,
+          count(*) FILTER (WHERE EXISTS (
+            SELECT 1 FROM nba.injuries_vw i
+            WHERE i.nba_id = sp.player_id
+              AND i.season = sp.season
+              AND i.game_date = sp.ret
+              AND i.status = 'Out'
+          )) AS out_on_return
+   FROM sp"
+)
+
+stale_out <- DBI::dbGetQuery(
+  db_con,
+  "SELECT count(*) AS stale_rows
+   FROM nba.injuries_vw i
+   WHERE i.status = 'Out'
+     AND EXISTS (
+       SELECT 1 FROM nba.player_box_score_vw b
+       WHERE b.player_id = i.nba_id
+         AND b.game_date = i.game_date
+         AND b.season = i.season
+         AND b.min > 0
+     )"
+)
+
+out_rows <- DBI::dbGetQuery(db_con, "SELECT count(*) AS n FROM nba.injuries_vw WHERE status = 'Out'")
 
 mdl_meta <- tibble::tibble(
   model_id = MODEL_ID,
@@ -325,10 +340,9 @@ mdl_meta <- tibble::tibble(
   censored_spells = sum(mdl_unit$censored),
   history_imputed_spells = sum(mdl_unit$history_imputed),
   onset_eligible_spells = sum(mdl_unit$onset_eligible),
-  outcome_checked = nrow(outcome_gap),
-  outcome_gap_median = if (nrow(outcome_gap)) median(outcome_gap$outcome_gap_days, na.rm = TRUE) else NA_real_,
-  outcome_gap_mean = if (nrow(outcome_gap)) mean(outcome_gap$outcome_gap_days, na.rm = TRUE) else NA_real_,
-  played_before_last_out = sum(outcome_gap$outcome_gap_days < 0, na.rm = TRUE),
+  out_on_return_spells = as.numeric(out_on_return$out_on_return[[1]]),
+  out_report_rows = as.numeric(out_rows$n[[1]]),
+  stale_out_rows = as.numeric(stale_out$stale_rows[[1]]),
   model_trained_through = dplyr::first(rows$model_trained_through),
   model_created_at = dplyr::first(rows$model_created_at),
   latest_generated_at = max(rows$generated_at)
@@ -336,6 +350,7 @@ mdl_meta <- tibble::tibble(
   mutate(
     expected_days = as.numeric(.data$last_prediction_date - .data$first_prediction_date) + 1,
     missing_days = .data$expected_days - .data$prediction_days,
+    stale_out_share = .data$stale_out_rows / .data$out_report_rows,
     model_age_days = as.numeric(Sys.Date() - as.Date(.data$model_created_at))
   )
 

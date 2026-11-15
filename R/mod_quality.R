@@ -25,7 +25,7 @@ mod_quality_ui <- function(id) {
       )
     ),
     card(
-      card_header("Outcome definition"),
+      card_header("Outcome consistency"),
       reactable::reactableOutput(ns("definition"))
     ),
     card(
@@ -94,20 +94,14 @@ mod_quality_server <- function(id, filters) {
       m <- meta()
       d <- tibble::tibble(
         check = c(
-          "Spells with both outcomes",
-          "Median gap (days)",
-          "Mean gap (days)",
-          "First game before last Out report"
+          "Spells returned on a game still filed Out",
+          "Out report rows on games played",
+          "Share of all Out report rows"
         ),
         value = c(
-          m$outcome_checked[[1]],
-          round(m$outcome_gap_median[[1]], 1),
-          round(m$outcome_gap_mean[[1]], 1),
-          sprintf(
-            "%d (%.0f%%)",
-            m$played_before_last_out[[1]],
-            100 * m$played_before_last_out[[1]] / max(m$outcome_checked[[1]], 1)
-          )
+          sprintf("%d of %d", m$out_on_return_spells[[1]], m$resolved_spells[[1]]),
+          format(m$stale_out_rows[[1]], big.mark = ","),
+          sprintf("%.2f%%", 100 * m$stale_out_share[[1]])
         )
       )
       reactable::reactable(
