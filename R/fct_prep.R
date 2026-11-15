@@ -107,7 +107,6 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
       player = .data$label,
       ailment = ailment_label(.data$ailment_class),
       body_part = body_part_label(.data$body_region),
-      status = .data$status,
       injured = .data$injury_start_date,
       predicted = .data$pred_return_date
     ) |>

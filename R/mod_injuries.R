@@ -49,24 +49,9 @@ mod_injuries_server <- function(id) {
             format = reactable::colFormat(date = TRUE)
           ),
           team = reactable::colDef(name = "Team", align = "left"),
-          player = reactable::colDef(
-            name = "Player",
-            align = "left",
-            style = function(value, index) {
-              background <- switch(
-                d$status[index],
-                Out = "#f51e1e",
-                Doubtful = "#ffa87f",
-                Questionable = "#ffa87f",
-                Probable = "#fbff7f",
-                "#ffffff"
-              )
-              list(background = background)
-            }
-          ),
+          player = reactable::colDef(name = "Player", align = "left"),
           ailment = reactable::colDef(name = "Ailment class", align = "left"),
           body_part = reactable::colDef(name = "Body part", align = "left"),
-          status = reactable::colDef(show = FALSE),
           injured = reactable::colDef(
             name = "Date of injury",
             align = "left",
