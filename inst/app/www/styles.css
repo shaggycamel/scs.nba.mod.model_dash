@@ -1,0 +1,15 @@
+.navbar-brand {
+  font-weight: 600;
+}
+
+.value-box {
+  min-width: 180px;
+}
+
+.card {
+  margin-bottom: 1rem;
+}
+
+.text-muted.small {
+  font-size: 0.8rem;
+}

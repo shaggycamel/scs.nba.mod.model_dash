@@ -1,0 +1,9 @@
+.git
+.devlib
+.DS_Store
+data-raw
+deploy
+dev
+tests
+renv
+docker

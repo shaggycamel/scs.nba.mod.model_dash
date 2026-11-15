@@ -1,0 +1,16 @@
+^\.git$
+^\.Rproj\.user$
+^\.devlib$
+^dev$
+^data-raw$
+^renv$
+^renv\.lock$
+^docker$
+^deploy$
+^tests$
+^README\.Rmd$
+^\.deploy\.env$
+^\.profile$
+^\.DS_Store$
+^LICENSE\.md$
+^\.dockerignore$

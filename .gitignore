@@ -1,0 +1,18 @@
+.Rproj.user
+.Rhistory
+.RData
+*.rda
+.httr-oauth
+.DS_Store
+.quarto
+
+# Local dev library used to test against the league base image packages
+.devlib/
+
+# Docker build artifacts
+docker/*.tar.gz
+*.tar.gz
+
+# Deploy host secrets
+.profile
+.deploy.env
