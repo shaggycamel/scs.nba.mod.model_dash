@@ -115,31 +115,7 @@ first_rows <- rows |>
   slice_min(.data$prediction_date, n = 1, with_ties = FALSE) |>
   ungroup()
 
-# The free-text injury filing on the first missed game, cleaned for display.
-reasons <- DBI::dbGetQuery(
-  db_con,
-  "WITH sp AS (
-     SELECT DISTINCT player_id, season, injury_start_date
-     FROM mod.injury_daily_forecast_vw
-     WHERE player_id IS NOT NULL
-   )
-   SELECT sp.player_id, sp.season, sp.injury_start_date,
-          min(i.reason) AS injury_reason
-   FROM sp
-   JOIN nba.injuries_vw i
-     ON i.nba_id = sp.player_id
-    AND i.season = sp.season
-    AND i.game_date = sp.injury_start_date
-   GROUP BY 1, 2, 3"
-) |>
-  as_tibble() |>
-  mutate(player_id = as.numeric(.data$player_id))
-
 mdl_unit <- first_rows |>
-  left_join(
-    reasons,
-    by = c("player_id", "season", "injury_start_date")
-  ) |>
   mutate(
     model_id = MODEL_ID,
     unit_id = .data$spell_id,
@@ -164,7 +140,6 @@ mdl_unit <- first_rows |>
     "injury_start_date",
     "onset_date",
     "first_status",
-    "injury_reason",
     "body_region",
     "ailment_class",
     "history_imputed",

@@ -43,7 +43,7 @@ mod_injuries_server <- function(id) {
           ),
           team = reactable::colDef(name = "Team", align = "left"),
           player = reactable::colDef(name = "Player", align = "left"),
-          injury = reactable::colDef(name = "Injury", align = "left", na = "Not reported"),
+          ailment = reactable::colDef(name = "Ailment class", align = "left"),
           body_part = reactable::colDef(name = "Body part", align = "left"),
           status = reactable::colDef(name = "Status", align = "left"),
           injured = reactable::colDef(

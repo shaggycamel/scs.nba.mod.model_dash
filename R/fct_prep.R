@@ -50,9 +50,27 @@ body_part_label <- function(x) {
   out
 }
 
-clean_reason <- function(x) {
-  out <- sub("^Injury/Illness\\s*-\\s*", "", x)
-  out[out %in% c("", "-", "Injury/Illness")] <- NA_character_
+AILMENT_LABELS <- c(
+  illness = "Illness",
+  sprain = "Sprain",
+  strain = "Strain",
+  contusion = "Contusion",
+  surgery = "Surgery",
+  tendinopathy = "Tendinopathy",
+  rupture_tear = "Rupture/tear",
+  fracture = "Fracture",
+  concussion = "Concussion",
+  dislocation = "Dislocation"
+)
+
+ailment_label <- function(x) {
+  out <- unname(AILMENT_LABELS[x])
+  unknown <- is.na(out) & !is.na(x)
+  out[unknown] <- paste0(
+    toupper(substr(x[unknown], 1, 1)),
+    substr(x[unknown], 2, nchar(x[unknown]))
+  )
+  out[is.na(x)] <- "Not reported"
   out
 }
 
@@ -72,7 +90,7 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
         "label",
         "team_slug",
         "injury_start_date",
-        "injury_reason",
+        "ailment_class",
         "body_region",
         "returned",
         "censor_reason"
@@ -87,7 +105,7 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
       forecast = .data$as_of,
       team = .data$team_slug,
       player = .data$label,
-      injury = clean_reason(.data$injury_reason),
+      ailment = ailment_label(.data$ailment_class),
       body_part = body_part_label(.data$body_region),
       status = .data$status,
       injured = .data$injury_start_date,
