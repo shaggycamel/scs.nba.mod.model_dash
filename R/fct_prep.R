@@ -92,14 +92,14 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
         "injury_start_date",
         "ailment_class",
         "body_region",
+        "actual_return_date",
         "returned",
         "censor_reason"
       ),
       by = "unit_id"
     ) |>
     dplyr::filter(
-      !.data$returned,
-      is.na(.data$censor_reason) | !grepl("^left_", .data$censor_reason)
+      .data$returned | is.na(.data$censor_reason) | !grepl("^left_", .data$censor_reason)
     ) |>
     dplyr::transmute(
       forecast = .data$as_of,
@@ -108,9 +108,10 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
       ailment = ailment_label(.data$ailment_class),
       body_part = body_part_label(.data$body_region),
       injured = .data$injury_start_date,
-      predicted = .data$pred_return_date
+      predicted = .data$pred_return_date,
+      actual = .data$actual_return_date
     ) |>
-    dplyr::arrange(.data$predicted, .data$player)
+    dplyr::arrange(dplyr::desc(.data$injured), .data$player)
 }
 
 SCOPE_COLOURS <- c(onset = "#133DEF", nowcast = "#8A8D93")

@@ -5,7 +5,7 @@
 mod_injuries_ui <- function(id) {
   ns <- NS(id)
   card(
-    card_header("Current injuries"),
+    card_header("Injury log"),
     reactable::reactableOutput(ns("table"))
   )
 }
@@ -29,7 +29,8 @@ mod_injuries_server <- function(id) {
         d,
         pagination = FALSE,
         filterable = TRUE,
-        defaultSorted = "predicted",
+        defaultSorted = "injured",
+        defaultSortOrder = "desc",
         bordered = TRUE,
         highlight = TRUE,
         defaultColDef = reactable::colDef(
@@ -56,6 +57,12 @@ mod_injuries_server <- function(id) {
             name = "Predicted return",
             align = "left",
             format = reactable::colFormat(date = TRUE)
+          ),
+          actual = reactable::colDef(
+            name = "Actual return",
+            align = "left",
+            format = reactable::colFormat(date = TRUE),
+            na = "-"
           )
         )
       )

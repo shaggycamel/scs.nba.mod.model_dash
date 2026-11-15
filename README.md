@@ -10,9 +10,9 @@ contract so the next model is a data adapter plus one registry row.
 
 ## What it reports
 
-The **Injuries** page is the working view: one row per currently injured player
-with the injury filing, body part, date of injury, predicted return and the
-date of the forecast.
+The **Injuries** page is the working view: one row per injury spell with the
+body part, ailment class, date of injury, predicted return, forecast date and
+the actual return once the spell resolves.
 
 The model page is computed from the baked daily forecasts by the same metric
 functions (`R/fct_metrics.R`):
