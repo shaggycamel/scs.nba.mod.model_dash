@@ -13,9 +13,14 @@ source("R/fct_db.R")
 
 section <- Sys.getenv("NBA_UPDATE_LOG_SECTION", "jetson-write")
 kickoff <- Sys.getenv("LOG_KICKOFF", "")
+job_kickoff <- if (nzchar(kickoff)) {
+  as.POSIXct(strptime(kickoff, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"))
+} else {
+  Sys.time()
+}
 row <- data.frame(
   source = Sys.getenv("LOG_SOURCE", "scs.nba.mod.model_dash"),
-  job_kickoff = as.POSIXct(if (nzchar(kickoff)) kickoff else format(Sys.time(), tz = "UTC"), tz = "UTC"),
+  job_kickoff = job_kickoff,
   cadence = Sys.getenv("LOG_CADENCE", "all"),
   task = Sys.getenv("LOG_TASK", "dashboard:model_dash"),
   task_time = as.POSIXct(format(Sys.time(), tz = "UTC"), tz = "UTC"),
