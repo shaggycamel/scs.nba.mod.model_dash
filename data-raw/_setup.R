@@ -17,6 +17,8 @@ source(here("R", "fct_db.R"))
 
 db_con <- db_connect(Sys.getenv("NBA_DB_SECTION", "jetson-read"))
 
+dir.create(here("data"), showWarnings = FALSE)
+
 save_data <- function(name, value) {
   env <- new.env(parent = emptyenv())
   assign(name, value, envir = env)
