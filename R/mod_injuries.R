@@ -66,7 +66,7 @@ mod_injuries_server <- function(id) {
           ),
           ailment = reactable::colDef(name = "Ailment class", align = "left"),
           body_part = reactable::colDef(name = "Body part", align = "left"),
-          status = reactable::colDef(name = "Status", align = "left"),
+          status = reactable::colDef(show = FALSE),
           injured = reactable::colDef(
             name = "Date of injury",
             align = "left",
