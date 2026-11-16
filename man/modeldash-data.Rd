@@ -11,6 +11,7 @@
 \alias{injury_coverage}
 \alias{injury_censor}
 \alias{injury_meta}
+\alias{game_day}
 \docType{data}
 \title{Baked model accuracy frames}
 \description{
@@ -31,6 +32,7 @@ injury_unit
 injury_coverage
 injury_censor
 injury_meta
+game_day
 }
 \format{
 \code{mdl_prob} is one row per model, unit, forecast date, horizon and scope
@@ -51,5 +53,8 @@ model), holding the dimensions and outcome fields.
 figures.
 
 The \code{injury_*} objects are the same frames before the combine step.
+
+\code{game_day} is one row per player and unplayed fixture from
+\code{mod.game_day_vw}, holding availability, its source and expected usage.
 }
 \keyword{datasets}

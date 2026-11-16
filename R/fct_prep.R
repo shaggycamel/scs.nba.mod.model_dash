@@ -168,6 +168,38 @@ injuries_table <- function(model_id, prob = mdl_prob, units = mdl_unit) {
     dplyr::arrange(dplyr::desc(.data$injured), .data$player)
 }
 
+PLAY_SOURCE_LABELS <- c(
+  report = "Injury report",
+  injury = "Injury curve",
+  state = "State only"
+)
+
+play_source_label <- function(x) {
+  out <- unname(PLAY_SOURCE_LABELS[x])
+  out[is.na(out)] <- "Unknown"
+  out
+}
+
+# One row per player and upcoming fixture, shaped for the game-day table.
+game_day_table <- function(rows = game_day) {
+  rows |>
+    dplyr::transmute(
+      game_date = .data$game_date,
+      team = .data$team_abbreviation,
+      matchup = paste0(dplyr::if_else(.data$home, "vs ", "@ "), .data$opponent),
+      player = .data$player_name,
+      position = .data$position,
+      depth = .data$depth_rank,
+      report = .data$report_status,
+      p_play = .data$p_play,
+      source = play_source_label(.data$p_play_source),
+      minutes_if_plays = .data$minutes_if_plays,
+      expected_minutes = .data$expected_minutes,
+      expected_usage = .data$expected_usage
+    ) |>
+    dplyr::arrange(.data$game_date, .data$team, .data$depth, .data$player)
+}
+
 filter_horizon <- function(df, hz) {
   dplyr::filter(df, .data$horizon == hz)
 }

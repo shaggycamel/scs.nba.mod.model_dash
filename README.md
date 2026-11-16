@@ -12,6 +12,9 @@ contract so the next model is a data adapter plus one registry row.
 
 - **Overview** — a scorecard, one row per registered model: Brier (next game and
   7 days) for onset and nowcast, AUC, games MAE, C-index, resolved/censored.
+- **Game day** — one row per player per unplayed fixture: the availability
+  probability, whether it came from the injury report, the injury-duration
+  curve or the hierarchy's state-only model, and the expected minutes and usage.
 - **Injuries** — a tabset:
   - **Injury log** — one row per injury spell with forecast date, team, player,
     ailment class, body part, date of injury, predicted return and the actual
@@ -27,7 +30,8 @@ Two scopes are reported throughout:
 ## Layout
 
 - `R/` — app, modules, metric functions and the model registry (`models.R`).
-- `data-raw/` — bake scripts. One script per model, writing normalised frames.
+- `data-raw/` — bake scripts. One script per model, writing normalised frames,
+  plus `02_game_day.R` for the day-of fixture table.
 - `data/` — baked `.rda` files (git-ignored, produced at deploy time).
 - `docker/`, `deploy/` — image build and HF deploy pipeline
   (`deploy/cron.sh` is the single entry point).

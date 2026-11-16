@@ -53,6 +53,17 @@ test_that("the injury table fields are baked", {
   expect_gt(sum(!is.na(mdl_unit$ailment_class)), 0)
 })
 
+test_that("the game day frame is baked", {
+  skip_if_not(file.exists(test_path("..", "..", "data", "game_day.rda")), "data not baked")
+  expect_s3_class(game_day, "tbl_df")
+  expect_true(all(
+    c("game_date", "team_abbreviation", "player_name", "p_play", "p_play_source") %in%
+      names(game_day)
+  ))
+  expect_false(any(is.na(game_day$p_play)))
+  expect_true(all(game_day$p_play_source %in% names(PLAY_SOURCE_LABELS)))
+})
+
 test_that("ailment and body part labels are readable", {
   expect_equal(ailment_label("rupture_tear"), "Rupture/tear")
   expect_equal(ailment_label("sprain"), "Sprain")
