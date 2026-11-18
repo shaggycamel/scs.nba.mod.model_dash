@@ -7,8 +7,8 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     page_navbar(
       id = "main_nav",
-      window_title = "NBA Model Accuracy",
-      title = tags$span("Model Accuracy"),
+      window_title = "NBA Model Dashboard",
+      title = tags$span("Model Dashboard"),
       nav_spacer(),
       nav_panel("Overview", mod_scorecard_ui("scorecard_1")),
       nav_panel("Game day", mod_game_day_ui("game_day_1")),

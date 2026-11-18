@@ -1,11 +1,12 @@
 Package: modeldash
-Title: NBA Model Accuracy Dashboard
+Title: NBA Model Dashboard
 Version: 0.0.0.9000
 Authors@R:
     person("Oliver", "Eaton", , "eat_fred@proton.me", role = c("aut", "cre"))
-Description: Accuracy monitoring for the NBA predictive models. Bakes the
-    published model views at build time and reports calibration, point error,
-    drift and coverage for each registered model.
+Description: Accuracy monitoring and per-game forecasts for the NBA predictive
+    models. Bakes the published model views at build time and reports
+    calibration, point error, drift and coverage for each registered model,
+    alongside the player stat projections.
 License: MIT + file LICENSE
 URL: https://github.com/shaggycamel/scs.nba.mod.model_dash.git
 BugReports: https://github.com/shaggycamel/scs.nba.mod.model_dash.git/issues

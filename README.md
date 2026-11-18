@@ -1,8 +1,8 @@
 # `{scs.nba.mod.model_dash}`
 
-Accuracy monitoring for the NBA predictive models. A `{golem}` Shiny app, baked
-at build time from the published model views and deployed to a Hugging Face
-Space, in the same style as the league dashboard.
+Accuracy monitoring and per-game forecasts for the NBA predictive models. A
+`{golem}` Shiny app, baked at build time from the published model views and
+deployed to a Hugging Face Space, in the same style as the league dashboard.
 
 The first registered model is the injury duration model
 (`mod.injury_daily_forecast_vw`). The app is built around a small model
@@ -36,7 +36,8 @@ Two scopes are reported throughout:
 
 - `R/` — app, modules, metric functions and the model registry (`models.R`).
 - `data-raw/` — bake scripts. One script per model, writing normalised frames,
-  plus `02_game_day.R` for the day-of fixture table.
+  plus `02_game_day.R` for the day-of fixture table and `03_player_stats.R` for
+  the player stat projections.
 - `data/` — baked `.rda` files (git-ignored, produced at deploy time).
 - `docker/`, `deploy/` — image build and HF deploy pipeline
   (`deploy/cron.sh` is the single entry point).
