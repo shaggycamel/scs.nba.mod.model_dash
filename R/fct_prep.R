@@ -241,7 +241,7 @@ player_stats_table <- function(
   if (!is.null(player) && nzchar(player)) {
     d <- dplyr::filter(
       d,
-      grepl(player, .data$player_name, ignore.case = TRUE, fixed = TRUE)
+      grepl(tolower(player), tolower(.data$player_name), fixed = TRUE)
     )
   }
 
