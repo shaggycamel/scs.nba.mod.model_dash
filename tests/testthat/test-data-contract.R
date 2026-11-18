@@ -64,6 +64,30 @@ test_that("the game day frame is baked", {
   expect_true(all(game_day$p_play_source %in% names(PLAY_SOURCE_LABELS)))
 })
 
+test_that("the player stat projections are baked", {
+  skip_if_not(
+    file.exists(test_path("..", "..", "data", "player_stats.rda")),
+    "data not baked"
+  )
+  expect_s3_class(player_stats, "tbl_df")
+  expect_true(all(
+    c(
+      "game_date",
+      "horizon_days",
+      "team_abbreviation",
+      "player_name",
+      "p_play",
+      "minutes_if_plays",
+      "pred_pts",
+      "pred_reb",
+      "pred_ast"
+    ) %in%
+      names(player_stats)
+  ))
+  expect_false(any(is.na(player_stats$pred_pts)))
+  expect_true(all(player_stats$pred_pts >= 0))
+})
+
 test_that("ailment and body part labels are readable", {
   expect_equal(ailment_label("rupture_tear"), "Rupture/tear")
   expect_equal(ailment_label("sprain"), "Sprain")

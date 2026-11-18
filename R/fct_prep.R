@@ -204,6 +204,75 @@ filter_horizon <- function(df, hz) {
   dplyr::filter(df, .data$horizon == hz)
 }
 
+# Player stat projections ---------------------------------------------------
+
+PLAYER_STAT_LABELS <- c(
+  pred_pts = "Pts",
+  pred_reb = "Reb",
+  pred_ast = "Ast",
+  pred_fg3m = "3PM",
+  pred_stl = "Stl",
+  pred_blk = "Blk",
+  pred_tov = "TOV",
+  pred_fga = "FGA",
+  pred_fta = "FTA",
+  pred_pf = "PF"
+)
+
+player_stat_choices <- function() {
+  PLAYER_STAT_LABELS
+}
+
+# One row per player and fixture, filtered to a date, team and player.
+player_stats_table <- function(
+  rows = player_stats,
+  game_date = NULL,
+  team = "all",
+  player = "",
+  sort_stat = "pred_pts"
+) {
+  d <- rows
+  if (!is.null(game_date)) {
+    d <- dplyr::filter(d, .data$game_date == as.Date(game_date))
+  }
+  if (!identical(team, "all")) {
+    d <- dplyr::filter(d, .data$team_abbreviation == team)
+  }
+  if (!is.null(player) && nzchar(player)) {
+    d <- dplyr::filter(
+      d,
+      grepl(player, .data$player_name, ignore.case = TRUE, fixed = TRUE)
+    )
+  }
+
+  d <- d |>
+    dplyr::transmute(
+      game_date = .data$game_date,
+      horizon = .data$horizon_days,
+      team = .data$team_abbreviation,
+      matchup = paste0(dplyr::if_else(.data$home, "vs ", "@ "), .data$opponent),
+      player = .data$player_name,
+      p_play = .data$p_play,
+      minutes_if_plays = .data$minutes_if_plays,
+      expected_usage = .data$expected_usage,
+      pred_pts = .data$pred_pts,
+      pred_reb = .data$pred_reb,
+      pred_ast = .data$pred_ast,
+      pred_fg3m = .data$pred_fg3m,
+      pred_stl = .data$pred_stl,
+      pred_blk = .data$pred_blk,
+      pred_tov = .data$pred_tov,
+      pred_fga = .data$pred_fga,
+      pred_fta = .data$pred_fta,
+      pred_pf = .data$pred_pf
+    )
+
+  if (!sort_stat %in% names(d)) {
+    sort_stat <- "pred_pts"
+  }
+  dplyr::arrange(d, dplyr::desc(.data[[sort_stat]]), .data$player)
+}
+
 # One row per registered model, latest computed headline figures. Uses the full
 # baked window so the scorecard always reflects the current state.
 scorecard_table <- function(prob, point, units, registry) {

@@ -15,6 +15,11 @@ contract so the next model is a data adapter plus one registry row.
 - **Game day** — one row per player per unplayed fixture: the availability
   probability, whether it came from the injury report, the injury-duration
   curve or the hierarchy's state-only model, and the expected minutes and usage.
+- **Player stats** — one row per player and fixture from the published player
+  stat snapshot: P(play), minutes, expected usage and the 13 fitted stat means
+  plus points and rebounds. Filter by date, team and player; sort by any stat.
+  Values are conditional on playing, so multiply by P(play) for an ex-ante
+  expected value.
 - **Injuries** — a tabset:
   - **Injury log** — one row per injury spell with forecast date, team, player,
     ailment class, body part, date of injury, predicted return and the actual

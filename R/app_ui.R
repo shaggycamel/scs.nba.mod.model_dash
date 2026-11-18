@@ -12,6 +12,7 @@ app_ui <- function(request) {
       nav_spacer(),
       nav_panel("Overview", mod_scorecard_ui("scorecard_1")),
       nav_panel("Game day", mod_game_day_ui("game_day_1")),
+      nav_panel("Player stats", mod_player_stats_ui("player_stats_1")),
       nav_panel(
         "Injuries",
         bslib::navset_card_tab(

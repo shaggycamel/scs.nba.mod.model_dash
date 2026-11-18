@@ -16,6 +16,7 @@ app_server <- function(input, output, session) {
 
   mod_scorecard_server("scorecard_1")
   mod_game_day_server("game_day_1")
+  mod_player_stats_server("player_stats_1")
   mod_injuries_server("injuries_1")
   mod_accuracy_trend_server("accuracy_trend_1")
 }
