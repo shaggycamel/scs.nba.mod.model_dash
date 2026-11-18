@@ -85,14 +85,15 @@ mod_player_stats_server <- function(id) {
       reactable::reactable(
         d,
         pagination = TRUE,
-        defaultPageSize = 25,
+        defaultPageSize = 20,
+        filterable = TRUE,
         defaultSorted = if (is.null(input$sort_stat)) "pred_pts" else input$sort_stat,
         defaultSortOrder = "desc",
         bordered = TRUE,
         highlight = TRUE,
         defaultColDef = reactable::colDef(
           align = "left",
-          minWidth = 80,
+          minWidth = 90,
           headerStyle = list(background = "#cce5ff")
         ),
         columns = c(
