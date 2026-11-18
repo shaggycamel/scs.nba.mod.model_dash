@@ -7,8 +7,8 @@ test_that("trend metric choices use codes as values and labels as names", {
 
 test_that("player stat choices map readable labels to baked columns", {
   choices <- player_stat_choices()
-  expect_equal(names(choices), names(PLAYER_STAT_LABELS))
-  expect_equal(unname(choices), unname(PLAYER_STAT_LABELS))
+  expect_equal(unname(choices), names(PLAYER_STAT_LABELS))
+  expect_equal(names(choices), unname(PLAYER_STAT_LABELS))
 })
 
 test_that("player_stats_table filters and shapes a fixture", {

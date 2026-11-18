@@ -220,7 +220,7 @@ PLAYER_STAT_LABELS <- c(
 )
 
 player_stat_choices <- function() {
-  PLAYER_STAT_LABELS
+  stats::setNames(names(PLAYER_STAT_LABELS), unname(PLAYER_STAT_LABELS))
 }
 
 # One row per player and fixture, filtered to a date, team and player.
